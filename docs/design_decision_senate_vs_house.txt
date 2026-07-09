@@ -1,0 +1,42 @@
+﻿Design Decision to Make First: Senate or House of Reps?
+The National Assembly is bicameral, and the document's role list mixes both chambers (Senate President / Speaker "depending on chamber"). For v1, I'd recommend building the House of Representatives chamber — the green chamber. Reasons: the Speaker role maps cleanly to the document's "Presiding Officer (Speaker)" language used throughout Steps 1–4, the green chamber is the more visually recognizable of the two, and a 10-person group reads more naturally as a House delegation. The Senate skin (red chamber, Senate President) can be a fast-follow since the geometry is nearly identical — mostly a material/color swap plus signage.
+Nigeria-Specific Design Adjustments
+The chamber. Model on the House of Reps chamber at the NASS complex, Abuja: the horseshoe/semi-circular seating arrangement (unlike Westminster's facing benches), green leather seats and carpeting, the elevated Speaker's dais with the Nigerian coat of arms behind it, the Clerk's table below, and the public gallery above. The distinctive NASS dome exterior makes a great establishing shot when students first load in.
+The mace. The Nigerian mace is central to legitimacy here — no sitting is valid without it. This maps perfectly to the Step 0 gate: the Sergeant-at-Arms only carries in the mace once all 10 seats are filled, and its placement on the Clerk's table is the visual signal that the Assembly is constituted and Step 1 can begin. (There's even real-world resonance students will recognize — the 2018 mace theft incident is a memorable teaching moment about what the mace means procedurally.)
+Roles. The document's Nigerian office list (Speaker, Clerk, Majority Leader, Minority Leader, Chief Whip, Committee Chairpersons, Sergeant-at-Arms) covers 7 offices. The document's Assembly role table needs 10 seats, including Comparative Systems Analyst, Bureaucracy & Policy Analyst, Accountability & Ethics Lead, Stakeholder Relations Lead, and Innovation & Policy Transfer Lead. For v1 I'd resolve this by treating the analyst/lead roles as special committee chairs — e.g., "Chairman, Committee on Comparative Systems" — which is authentic to how the House actually works (it has 100+ standing committees) and keeps everything inside Nigerian parliamentary vocabulary. The Sergeant-at-Arms becomes an NPC rather than a student role, since the document doesn't assign it confirmation authority.
+Avatars and attire. This is where Nigeria-only gets fun: avatar wardrobe drawing on actual House conventions — agbada, babariga, kaftan, senator suits, Isi-agu, geles and wrappers for female members — reflecting how Nigerian legislators genuinely dress. The Speaker gets the distinctive robes. This does more cultural work than any Westminster wig would.
+Audio. Chamber ambience with Nigerian-accented crosstalk (your Moonshot TTS work could eventually feed this), the "order, order!" call, and the mace fanfare. Even ambient details like the call to "the ayes have it" in a Nigerian register make it land.
+Language and procedure. Motions, points of order, and the division bell should follow House of Reps Standing Orders phrasing. The Clerk "reading the motion" in Step 1–4 becomes an actual voiced/text moment using authentic formats ("Hon. Members, the question is that this House do resolve...").
+Revised Asset List (Nigeria v1)
+Environment
+* House of Representatives chamber (horseshoe layout, green scheme, Speaker's dais, coat of arms, gallery)
+* NASS complex exterior/dome establishing shot (can be a skybox or short flythrough, not a full explorable model)
+* Committee room (NASS committee room styling — long table, green accents)
+* Lobby/antechamber for Charter display and dashboard pillars
+Props
+* Nigerian mace (hero asset — high detail, it's on camera constantly)
+* Speaker's chair and dais, Clerk's table, 10 member seats with desk mics
+* Gavel, order paper props, dispatch/despatch equivalent (Table of the House)
+* 10 dynamic role placards (Nigerian office titles)
+* 5 governance dashboard pillars with damage/glow states
+* 5 motto banners, wall-embossing system
+* 4 reform strategy doors with vignette interiors
+* 8 reform dossiers, committee stamp, vault
+* 6 safeguard architectural add-ons
+* Charter scroll with 5 signature slots
+Characters
+* 10 base avatars — Nigerian student body diversity (this matters: Hausa, Yoruba, Igbo, and minority representation, gender balance)
+* Attire layers: agbada, kaftan, suits, traditional women's attire, Speaker's robes, Clerk's gown
+* Sergeant-at-Arms NPC + mace procession animation
+Animations/cinematics
+* Mace procession (the Step 0 completion ritual), gavel strike, signing ceremony, seat-claim, door walk-throughs, hologram rise, stamp-and-vault
+* 7 crisis dioramas — and these should now be Nigerian-contextualized: the "Weak Public Service Delivery" diorama is a Nigerian PHC queue; "Weak Digital Government" evokes a NIMC/verification backlog scene; "Excessive Red Tape" a Nigerian ministry file-stack scene. Recognition drives engagement.
+* 4 reform philosophy door cinematics
+Audio
+* Chamber ambience, gavel, mace fanfare, division bell, dashboard degradation cues, Nigerian-accented procedural callouts
+Systems
+* Single-legislature office database (extensible schema so UK/US skins slot in later without refactor)
+* Consequence-hook rules engine + persistent 13-round state store
+The main scope savings versus the three-country version: one chamber environment instead of three, one office database, one attire set, no per-country audio identity — roughly a 40–50% reduction in the environment/character budget, which you can partially reinvest in making the crisis dioramas and mace ceremony genuinely great.
+One thing to keep on the radar: even though v1 is Nigeria-only for the environment, Step 2 still requires students to pick a developed comparison country (UK, Canada, Germany, etc.), so the holographic situation table still needs lightweight comparison assets — miniature landmark models or flag-panel representations — just not full chambers.
+Want me to start generating hero asset candidates (mace, Speaker's dais, chamber shell) via Mint so you have visual material for the ISP review, or draft this as a formal development handoff spec first?

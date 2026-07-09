@@ -3,3 +3,12 @@
 .DS_Store
 node_modules/
 dist/
+
+# VS Code workspace file (machine-specific folder paths)
+*.code-workspace
+
+# Generated video frames (too large for git)
+ExtractedFrames/
+
+# Third-party application copy
+LichtFeld-Studio-0.5.3/
