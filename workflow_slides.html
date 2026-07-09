@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NASS 3DGS Simulation Pipeline Presentation</title>
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: rgba(17, 24, 39, 0.7);
+      --border-color: rgba(34, 197, 94, 0.2);
+      --primary-color: #22c55e;
+      --accent-color: #eab308;
+      --text-color: #f3f4f6;
+      --text-muted: #9ca3af;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background-image: radial-gradient(circle at 10% 20%, rgba(34, 197, 94, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(234, 179, 8, 0.03) 0%, transparent 40%);
+    }
+
+    header {
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      z-index: 10;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo span {
+      color: var(--primary-color);
+    }
+
+    .slide-counter {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.2rem 0.8rem;
+      border-radius: 20px;
+    }
+
+    .presentation-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .slide {
+      position: absolute;
+      width: 90%;
+      max-width: 1200px;
+      height: 80%;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 3rem;
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+      z-index: 5;
+    }
+
+    .slide-content {
+      display: flex;
+      gap: 3rem;
+      height: 100%;
+      align-items: center;
+    }
+
+    .slide-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .slide-visual {
+      flex: 1.2;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+    }
+
+    .slide-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .slide-visual:hover img {
+      transform: scale(1.02);
+    }
+
+    .slide-title-tag {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--primary-color);
+    }
+
+    .slide-text h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-text p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .step-number {
+      background: rgba(34, 197, 94, 0.1);
+      color: var(--primary-color);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .step-details h4 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .step-details p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Grid layout for Slide 2 (References) */
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      width: 100%;
+      height: 100%;
+      padding: 1rem;
+    }
+
+    .grid-img-container {
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .grid-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .grid-img-label {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    /* Title Slide Specifics */
+    .slide.title-slide {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background-image: radial-gradient(ellipse at center, rgba(34, 197, 94, 0.08) 0%, transparent 60%);
+    }
+
+    .title-slide-content {
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .title-slide h1 {
+      font-size: 3.8rem;
+      font-weight: 900;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #ffffff 30%, var(--primary-color) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .title-slide p {
+      font-size: 1.4rem;
+      color: var(--text-muted);
+    }
+
+    .tech-badges {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.4rem 1.2rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .badge span {
+      color: var(--primary-color);
+    }
+
+    footer {
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      z-index: 10;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 0.6rem 1.5rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-btn:hover {
+      background: rgba(34, 197, 94, 0.1);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .nav-btn.primary {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+      color: var(--bg-color);
+    }
+
+    .nav-btn.primary:hover {
+      background: #1eb050;
+      box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+      color: var(--bg-color);
+    }
+
+    .keyboard-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .keyboard-hint kbd {
+      background: rgba(255,255,255,0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: inherit;
+    }
+
+    /* Video placeholder look */
+    .video-mock {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, #1a2333 0%, #0d131f 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .play-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+      animation: pulse 2s infinite;
+      cursor: pointer;
+    }
+
+    .play-icon {
+      width: 0;
+      height: 0;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-left: 25px solid var(--bg-color);
+      margin-left: 8px;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+      70% { box-shadow: 0 0 0 20px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo"><span>NASS</span> Simulation Pipeline</div>
+    <div class="slide-counter" id="slide-counter">Slide 1 of 6</div>
+  </header>
+
+  <div class="presentation-container">
+
+    <!-- SLIDE 1: Title Slide -->
+    <div class="slide title-slide active" id="slide-0">
+      <div class="title-slide-content">
+        <div class="slide-title-tag">Proposal & Workflow Handoff</div>
+        <h1>NASS Chamber 3DGS Simulation Pipeline</h1>
+        <p>Creating photorealistic 3D chambers for Comparative Public Administration using rapid 3D Gaussian Splatting and WebGL runtimes</p>
+        <div class="tech-badges">
+          <div class="badge"><span>References</span> Google Images</div>
+          <div class="badge"><span>Stitching</span> Higgsfield AI</div>
+          <div class="badge"><span>Scanning</span> Epic RealityScan</div>
+          <div class="badge"><span>Editor</span> SupaSplat</div>
+          <div class="badge"><span>Sim Engine</span> Next.js CLI</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Step 1 - Image Reference Gathering -->
+    <div class="slide" id="slide-1">
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="slide-title-tag">Step 01: Reference Collection</div>
+          <h2>Google Images Reference Sourcing</h2>
+          <p>Gathered multiple high-resolution photos representing distinct angles of the National Assembly Complex (NASS) in Abuja, Nigeria.</p>
+          <div class="step-list">
+            <div class="step-item">
+              <div class="step-number">✓</div>
+              <div class="step-details">
+                <h4>Chamber Angles</h4>
+                <p>Acquired clear shots of the front facade, surrounding dome, side structures, and top-down layout.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">✓</div>
+              <div class="step-details">
+                <h4>Detail Validation</h4>
+                <p>Captures precise color balance (the signature green carpet and mahogany woodwork) for realism.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <div class="image-grid">
+            <div class="grid-img-container">
+              <img src="./COMPLEX.png" alt="NASS Aerial Dome Complex">
+              <div class="grid-img-label">Aerial/Dome View</div>
+            </div>
+            <div class="grid-img-container">
+              <img src="./FRONTVIEW.png" alt="NASS Front Facade">
+              <div class="grid-img-label">Front Facade</div>
+            </div>
+            <div class="grid-img-container">
+              <img src="./TOPVIEW.png" alt="NASS Layout Map">
+              <div class="grid-img-label">Top View Layout</div>
+            </div>
+            <div class="grid-img-container">
+              <img src="./NASS.jpg" alt="Chamber Interior Details">
+              <div class="grid-img-label">Chamber Architecture</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Step 2 - Video Interpolation -->
+    <div class="slide" id="slide-2">
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="slide-title-tag">Step 02: Video Generation</div>
+          <h2>Higgsfield AI Video Stitching</h2>
+          <p>Inputting static NASS reference views into Higgsfield to generate a continuous, smooth camera flythrough video.</p>
+          <div class="step-list">
+            <div class="step-item">
+              <div class="step-number">1</div>
+              <div class="step-details">
+                <h4>Multi-Angle Alignment</h4>
+                <p>Upload Front, Sides, and Top view images to map spatial keypoints.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">2</div>
+              <div class="step-details">
+                <h4>Frame Interpolation</h4>
+                <p>Stitch views into a single, cohesive 1080p camera pan movie.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">3</div>
+              <div class="step-details">
+                <h4>Output Caching</h4>
+                <p>Export MP4 footage optimized for Gaussian Splat feature matching.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <div class="video-mock">
+            <div class="play-btn">
+              <div class="play-icon"></div>
+            </div>
+            <div>
+              <h3 style="margin-bottom: 0.5rem;">Stitched Pan Sequence</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Higgsfield AI: Synthesizing 3D space from 2D image anchors</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Step 3 - Gaussian Splat Generation -->
+    <div class="slide" id="slide-3">
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="slide-title-tag">Step 03: 3D Reconstruction</div>
+          <h2>RealityScan & Splat Generation</h2>
+          <p>Processing the stitched flythrough video to construct the high-fidelity 3D Gaussian Splat (.ply file) of the chamber.</p>
+          <div class="step-list">
+            <div class="step-item">
+              <div class="step-number">✓</div>
+              <div class="step-details">
+                <h4>High Precision Point Clouds</h4>
+                <p>Epic RealityScan parses video frames to calculate high-density surface point locations.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">✓</div>
+              <div class="step-details">
+                <h4>Material Integrity</h4>
+                <p>Retains the complex wood paneling reflection and glass dome transparencies naturally.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <img src="./supasplat_nass_mockup.png" alt="SupaSplat editing window mockup">
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Step 4 - SupaSplat Optimization -->
+    <div class="slide" id="slide-4">
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="slide-title-tag">Step 04: Web Optimization</div>
+          <h2>Editing in SupaSplat Web Editor</h2>
+          <p>Using the open-source SupaSplat WebGL editor to trim unnecessary background data and adjust the chamber scale.</p>
+          <div class="step-list">
+            <div class="step-item">
+              <div class="step-number">1</div>
+              <div class="step-details">
+                <h4>Bounding Box Trimming</h4>
+                <p>Crop out extra skybox splats to keep the file size low.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">2</div>
+              <div class="step-details">
+                <h4>Splat Thinning</h4>
+                <p>Reduce count in non-essential areas to reach a target weight of &lt;15MB.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">3</div>
+              <div class="step-details">
+                <h4>Export file</h4>
+                <p>Save as a highly compressed .spz file for instant WebGL loading.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <img src="./supasplat_nass_mockup.png" alt="SupaSplat interface mockup showing bounding boxes">
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Step 5 - Runtime Integration -->
+    <div class="slide" id="slide-5">
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="slide-title-tag">Step 05: Application Handoff</div>
+          <h2>Next.js CLI Simulation Launch</h2>
+          <p>Mounting the optimized 3DGS chamber panorama as a web background inside the Next.js gameplay interface.</p>
+          <div class="step-list">
+            <div class="step-item">
+              <div class="step-number">✓</div>
+              <div class="step-details">
+                <h4>Glassmorphic UI Overlay</h4>
+                <p>10 role-card placeholders overlay seamlessly on top of the 3DGS environment.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">✓</div>
+              <div class="step-details">
+                <h4>State Sync Engine</h4>
+                <p>Supabase handles step confirmations and database variable updates in real-time.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-visual">
+          <img src="./simulation_running_dashboard.png" alt="Next.js Simulation Dashboard Running">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="keyboard-hint">Use <kbd>←</kbd> and <kbd>→</kbd> keys or click buttons to navigate</div>
+    <div class="nav-buttons">
+      <button class="nav-btn" id="prev-btn">← Previous</button>
+      <button class="nav-btn primary" id="next-btn">Next →</button>
+    </div>
+  </footer>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const slideCounter = document.getElementById('slide-counter');
+    let currentSlide = 0;
+
+    function updateSlides() {
+      slides.forEach((slide, index) => {
+        if (index === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+      slideCounter.innerText = `Slide ${currentSlide + 1} of ${slides.length}`;
+      
+      // Update buttons
+      if (currentSlide === 0) {
+        prevBtn.style.visibility = 'hidden';
+      } else {
+        prevBtn.style.visibility = 'visible';
+      }
+
+      if (currentSlide === slides.length - 1) {
+        nextBtn.innerText = 'Restart ↺';
+      } else {
+        nextBtn.innerText = 'Next →';
+      }
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+      } else {
+        currentSlide = 0;
+      }
+      updateSlides();
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          currentSlide = 0;
+          updateSlides();
+        }
+      } else if (e.key === 'ArrowLeft') {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        }
+      }
+    });
+
+    // Initialize
+    updateSlides();
+  </script>
+</body>
+</html>
